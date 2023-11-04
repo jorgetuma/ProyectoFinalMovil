@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pokedex/detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(id:pokemonId)));
                         print("ID: $pokemonId"); // Print the ID when the card is clicked
                       },
                       child: Container(
