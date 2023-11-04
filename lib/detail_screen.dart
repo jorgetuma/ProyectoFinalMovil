@@ -56,6 +56,26 @@ class _DetailScreenState extends State<DetailScreen> {
         children: <Widget>[Container(
           height: MediaQuery.of(context).size.height / 3,
         ),
+          Positioned(
+              child: SizedBox(
+                  height: 200,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      Hero(
+                          tag: 1,
+                          child: Opacity(
+                            opacity: 0.2,
+                            child: Image.asset(ApiService.whitePokeball),
+                          )
+                      ),
+                      Center(
+                        child: ApiService.getInstance().getImage(pokemonInfo.id.toString()),
+                      )
+                    ],
+                  )
+              )
+          ),
           SlidingSheet(
             elevation: 0,
             cornerRadius: 16,
@@ -71,26 +91,7 @@ class _DetailScreenState extends State<DetailScreen> {
               );
             },
           ),
-          Positioned(
-              child: SizedBox(
-            height: 200,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Hero(
-                        tag: 1,
-                        child: Opacity(
-                          opacity: 0.2,
-                          child: Image.asset(ApiService.whitePokeball),
-                        )
-                    ),
-                    Center(
-                      child: ApiService.getInstance().getImage(pokemonInfo.id.toString()),
-                    )
-                  ],
-                )
-          )
-          )],
+          ],
       ),
     );
   }

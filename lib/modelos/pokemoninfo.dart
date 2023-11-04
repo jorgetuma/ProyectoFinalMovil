@@ -36,7 +36,9 @@ class PokemonInfo {
       abilities: (json['abilities'] as List)
           .map((ability) => Ability.fromJson(ability))
           .toList(),
-      baseExperience: json['base_experience'],
+
+      baseExperience:
+      json['base_experience'] ?? 0,
       forms: (json['forms'] as List)
           .map((form) => Form.fromJson(form))
           .toList(),

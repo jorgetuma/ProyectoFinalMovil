@@ -33,17 +33,25 @@ class ApiService {
   }
 
   Widget getImage(String id) {
-    return CachedNetworkImage(
-      placeholder: (context, url) => new Container(
-        color: Colors.transparent,
-      ),
-      imageUrl:
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png',
-      errorWidget: (context, url, error) => Image.asset(whitePokeball),
-    );
+    try {
+      return CachedNetworkImage(
+        placeholder: (context, url) => new Container(
+          color: Colors.transparent,
+        ),
+        imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png',
+        errorWidget: (context, url, error) {
+          // En caso de un error, muestra la imagen de reemplazo.
+          return Image.asset(whitePokeball);
+        },
+      );
+    } catch (e) {
+      // Maneja la excepción de manera apropiada, como mostrar un mensaje de error.
+      return Text("Error: $e");
+    }
   }
 
-   Color getColorType(String type) {
+
+  Color getColorType(String type) {
     switch (type) {
       case 'normal':
         return Colors.brown[400]!;
