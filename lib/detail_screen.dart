@@ -1,7 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:pokedex/api/apiservice.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class DetailScreen extends StatefulWidget {
   final String id;
@@ -76,21 +78,12 @@ class _DetailScreenState extends State<DetailScreen> {
                   )
               )
           ),
-          SlidingSheet(
-            elevation: 0,
-            cornerRadius: 16,
-            snapSpec: const SnapSpec(
-              snap: true,
-              snappings: [0.7, 1.0],
-              positioning: SnapPositioning.relativeToAvailableSpace,
-            ),
 
-            builder: (context, state) {
-              return Container(
-                height: MediaQuery.of(context).size.height,
-              );
-            },
-          ),
+          SlidingUpPanel(
+            panel: Center(child: Text("This is the sliding Widget"),),
+            maxHeight: MediaQuery.of(context).size.height,
+            minHeight: 400,
+          )
           ],
       ),
     );
