@@ -30,7 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          // leading: Icon(Icons.menu),
           title: Text('Pokedex'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {},
+            ),],
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -42,22 +48,65 @@ class _HomeScreenState extends State<HomeScreen> {
               ),controller: _scrollController,
                 itemCount: pokedex.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                    child: Column(
-                      children: [
-                        Text(pokedex[index]['name']),
-                        Container(
-                          width: 100,
-                          height: 100,
-                          child: CachedNetworkImage(
-                            imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${index+1}.png',
-                            placeholder: (context, url) => CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
+                  String url = pokedex[index]['url'];
+                  List<String> parts = url.split('/');
+                  String pokemonId = parts[parts.length - 2];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        print("ID: $pokemonId"); // Print the ID when the card is clicked
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.green,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: CachedNetworkImage(
+                                        imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png',
+                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) => Image.asset('images/pokeball.png'),
+                                      ),
+                                    ),
+                                    Text(
+                                      pokedex[index]['name'],
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 5,
+                                right: 5,
+                                child: Text(
+                                  "#${pokemonId}",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   );
+
                 },
               ))
             ],
@@ -67,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchPokemonData({int offset = 0}) async {
-    var url = Uri.https("pokeapi.co", "/api/v2/pokemon", {"offset": offset.toString()});
+    var url = Uri.https("pokeapi.co", "/api/v2/pokemon", {"offset": offset.toString(), "limit": "50"});
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
