@@ -1,8 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:pokedex/api/apiservice.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex/modelos/pokemoninfo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -31,7 +30,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pokemonInfo = ApiService.getInstance().pokemonInfo;
+    final pokemonInfo = ApiService
+        .getInstance()
+        .pokemonInfo;
 
     if (pokemonInfo == null) {
       return Scaffold(
@@ -43,9 +44,11 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(pokemonInfo.forms[0].name, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 21)),
+        title: Text(pokemonInfo.forms[0].name,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 21)),
         elevation: 0,
-        backgroundColor: ApiService.getInstance().getColorType(pokemonInfo.types[0].type.name),
+        backgroundColor: ApiService.getInstance().getColorType(
+            pokemonInfo.types[0].type.name),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -53,10 +56,16 @@ class _DetailScreenState extends State<DetailScreen> {
           },
         ),
       ),
-      backgroundColor: ApiService.getInstance().getColorType(pokemonInfo.types[0].type.name),
+      backgroundColor: ApiService.getInstance().getColorType(
+          pokemonInfo.types[0].type.name),
       body: Stack(
-        children: <Widget>[Container(
-          height: MediaQuery.of(context).size.height / 3,
+        children: <Widget>[
+          pokemonTypes(pokemonInfo.types),
+          Container(
+          height: MediaQuery
+              .of(context)
+              .size
+              .height / 3,
         ),
           Positioned(
               child: SizedBox(
@@ -72,20 +81,71 @@ class _DetailScreenState extends State<DetailScreen> {
                           )
                       ),
                       Center(
-                        child: ApiService.getInstance().getImage(pokemonInfo.id.toString()),
+                        child: ApiService.getInstance().getImage(
+                            pokemonInfo.id.toString()),
                       )
                     ],
                   )
               )
           ),
-
           SlidingUpPanel(
             panel: Center(child: Text("This is the sliding Widget"),),
-            maxHeight: MediaQuery.of(context).size.height,
+            maxHeight: MediaQuery
+                .of(context)
+                .size
+                .height,
             minHeight: 400,
           )
-          ],
+        ],
       ),
+    );
+  }
+
+  Widget pokemonTypes(List<Type> types) {
+    List<Widget> lista = [];
+lista.add(
+    Container( child:
+        Text(
+          '#' + ApiService.getInstance().pokemonInfo!.id.toString(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 26,
+              color: Colors.white
+          ),
+        ),
+    ),
+              );
+    types.forEach((name) {
+      lista.add(
+        Row(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Color.fromARGB(80, 255, 255, 255)),
+              child: Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Text(
+                  name.type.name,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 8,
+            )
+          ],
+        ),
+      );
+    });
+    return Row(
+      children: lista,
+      crossAxisAlignment: CrossAxisAlignment.start,
     );
   }
 }
