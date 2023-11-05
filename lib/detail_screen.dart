@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pokedex/api/apiservice.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex/modelos/detailtabbar.dart';
 import 'package:pokedex/modelos/pokemoninfo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -89,13 +90,10 @@ class _DetailScreenState extends State<DetailScreen> {
               )
           ),
           SlidingUpPanel(
-            panel: Center(child: Text("This is the sliding Widget"),),
-            maxHeight: MediaQuery
-                .of(context)
-                .size
-                .height,
+            panel: DetailTabBar(),
+            maxHeight: MediaQuery.of(context).size.height,
             minHeight: 400,
-          )
+          ),
         ],
       ),
     );
