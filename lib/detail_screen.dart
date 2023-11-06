@@ -90,7 +90,7 @@ class _DetailScreenState extends State<DetailScreen> {
               )
           ),
           SlidingUpPanel(
-            panel: DetailTabBar(),
+            panel: DetailTabBar(pokemon: pokemonInfo),
             maxHeight: MediaQuery.of(context).size.height,
             minHeight: 400,
           ),

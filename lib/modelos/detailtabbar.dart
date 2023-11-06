@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/modelos/pokemoninfo.dart';
 
 class DetailTabBar extends StatelessWidget {
-  const DetailTabBar({super.key});
+  final PokemonInfo pokemon;
+
+  const DetailTabBar({super.key, required PokemonInfo this.pokemon});
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
+      initialIndex: 1,
       length: 5,
       child: Scaffold(
         appBar: AppBar(
@@ -21,38 +24,68 @@ class DetailTabBar extends StatelessWidget {
               Tab(
                 icon: Text(
                   "Description",
-                  style: TextStyle( fontSize: 14, fontWeight: FontWeight.bold),),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
               Tab(
                 icon: Text(
                   "Estats",
-                  style: TextStyle( fontSize: 14, fontWeight: FontWeight.bold),),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
               Tab(
                 icon: Text(
                   "Evolutions",
-                  style: TextStyle( fontSize: 14, fontWeight: FontWeight.bold),),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
               Tab(
                 icon: Text(
                   "Abilities",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
               Tab(
                 icon: Text(
                   "Moves",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: <Widget>[
-            Center(
-              child: Text("description"),
+            Container(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                child: Column(
+                  children: <Widget>[],
+                ),
+              ),
             ),
-            Center(
-              child: Text("Stats"),
+            Container(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                child: Column(
+                  children: <Widget>[
+                    Column(
+                      children: pokemon.stats.map((stat) {
+                        return ListTile(
+                          title: Text(
+                            '${stat.stat.name}: ${stat.baseStat}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: LinearProgressIndicator(
+                            value: stat.baseStat /
+                                100.0, // Asumiendo un rango de 0-100
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  ],
+                ),
+              ),
             ),
             Center(
               child: Text("Evolutions"),
