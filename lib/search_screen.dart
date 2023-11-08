@@ -45,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
         return false;
       }).toList();
 
-      // Sort the search results by Pokémon ID
+      // Sort by Pokémon ID
       matchingPokemon.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
 
       // Update the search results.
