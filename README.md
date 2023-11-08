@@ -1,16 +1,15 @@
 # pokedex
 
-Pokedex- Proyecto final desarrollo movil
+Pokedex- Proyecto final desarrollo movil por
+Jorge Tuma
+Aneury Estevez
 
-## Getting Started
+## Funcionamiento del la App
 
-This project is a starting point for a Flutter application.
+La pantalla principal consiste en un listView, al hacer tap sobre el icono de un pokemon cualquiera se despliega
+la vista de detalles del pokemon seleccionado. En la vista de detalles se muestra la descripción, estadisticas, habilidades, evoluciones y movimientos
+Para la entrega del avance del proyecto se encuentra terminada e implementado el tab de las estadisticas.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tecnoligias empleadas
+Se utilizan en su mayoria librerias oficiales de Flutter. Para la vista del detalle Pokemon se utiliza un SlidingUpPanel,
+que es una libreria alternativa al SlidingSheet.

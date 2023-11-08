@@ -29,7 +29,7 @@ class DetailTabBar extends StatelessWidget {
               ),
               Tab(
                 icon: Text(
-                  "Estats",
+                  "Stats",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
