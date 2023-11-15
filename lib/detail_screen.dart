@@ -63,36 +63,46 @@ class _DetailScreenState extends State<DetailScreen> {
         children: <Widget>[
           pokemonTypes(pokemonInfo.types),
           Container(
-          height: MediaQuery
-              .of(context)
-              .size
-              .height / 3,
-        ),
+            height: MediaQuery
+                .of(context)
+                .size
+                .height / 3,
+          ),
           Positioned(
-              child: SizedBox(
-                  height: 200,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Hero(
-                          tag: 1,
-                          child: Opacity(
-                            opacity: 0.2,
-                            child: Image.asset(ApiService.whitePokeball),
-                          )
+            top: 40,
+            child: SizedBox(
+              height: 200,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Hero(
+                    tag: 1,
+                    child: Opacity(
+                      opacity: 0.2,
+                      child: Image.asset(ApiService.whitePokeball),
+                    ),
+                  ),
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: ApiService.getInstance().getImage(pokemonInfo.id.toString()),
                       ),
-                      Center(
-                        child: ApiService.getInstance().getImage(
-                            pokemonInfo.id.toString()),
-                      )
-                    ],
-                  )
-              )
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           SlidingUpPanel(
             panel: DetailTabBar(pokemon: pokemonInfo),
-            maxHeight: MediaQuery.of(context).size.height,
-            minHeight: 400,
+            maxHeight: MediaQuery
+                .of(context)
+                .size
+                .height,
+            minHeight: MediaQuery.of(context).size.height / 1.8,
           ),
         ],
       ),
@@ -101,49 +111,58 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Widget pokemonTypes(List<Type> types) {
     List<Widget> lista = [];
-lista.add(
-    Container( child:
-        Text(
-          '#' + ApiService.getInstance().pokemonInfo!.id.toString(),
+
+    lista.add(
+      Padding(
+        padding: EdgeInsets.only(right: 8), // Ajusta el espacio a la derecha
+        child: Text(
+          '#' + ApiService
+              .getInstance()
+              .pokemonInfo!
+              .id
+              .toString(),
           style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 26,
-              color: Colors.white
+            fontWeight: FontWeight.bold,
+            fontSize: 26,
+            color: Colors.white,
           ),
         ),
-    ),
-              );
+      ),
+    );
+
     types.forEach((name) {
       lista.add(
         Row(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(0),
+              padding: EdgeInsets.all(6),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color.fromARGB(80, 255, 255, 255)),
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Text(
-                  name.type.name,
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white
-                  ),
+                borderRadius: BorderRadius.circular(20),
+                color: Color.fromARGB(80, 255, 255, 255),
+              ),
+              child: Text(
+                name.type.name,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
             SizedBox(
-              width: 8,
+              width: 8, // Ajusta el espacio entre los tipos
             )
           ],
         ),
       );
     });
-    return Row(
-      children: lista,
-      crossAxisAlignment: CrossAxisAlignment.start,
+
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        children: lista,
+        crossAxisAlignment: CrossAxisAlignment.start,
+      ),
     );
   }
 }
