@@ -6,7 +6,7 @@ class DetailTabBar extends StatelessWidget {
   final PokemonInfo pokemon;
 
   const DetailTabBar({super.key, required PokemonInfo this.pokemon});
-  
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
