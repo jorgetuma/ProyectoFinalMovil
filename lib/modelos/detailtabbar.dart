@@ -10,7 +10,7 @@ class DetailTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: 5,
       child: Scaffold(
         appBar: AppBar(
@@ -64,9 +64,9 @@ class DetailTabBar extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15)
-                ),
+                      Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15)),
                       Text(
                         'Description',
                         style: TextStyle(
@@ -81,16 +81,19 @@ class DetailTabBar extends StatelessWidget {
                         width: 100,
                         height: 100,
                         child: SingleChildScrollView(
-                          child:  Text(
-                              ApiService.getInstance().specie!.flavorTextEntries.where((item) => item.language.name == 'en')
-                            .first
-                            .flavorText,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
+                          child: Text(
+                            ApiService.getInstance()
+                                .specie!
+                                .flavorTextEntries
+                                .where((item) => item.language.name == 'en')
+                                .first
+                                .flavorText,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                      ),
                       ),
                       SizedBox(
                         height: 10,
@@ -108,58 +111,64 @@ class DetailTabBar extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-          Padding(
-            padding: const EdgeInsets.only(right: 200),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Height',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 200),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Height',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Text(
+                                  ApiService.getInstance()
+                                      .pokemonInfo!
+                                      .height
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Weight',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Text(
+                                  ApiService.getInstance()
+                                      .pokemonInfo!
+                                      .weight
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Text(
-                      ApiService.getInstance().pokemonInfo!.height.toString(),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Weight',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    Text(
-                      ApiService.getInstance().pokemonInfo!.weight.toString(),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          ]),
+                    ]),
               ),
             ),
             //Stats
@@ -204,11 +213,36 @@ class DetailTabBar extends StatelessWidget {
             ),
             //Abilities
             Center(
-              child: Text("Abilities"),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: pokemon.abilities.map((ability) {
+                  return ListTile(
+                    title: Text(
+                      'Ability: ${ability.ability.name}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle:
+                        Text('Hidden: ${ability.isHidden ? 'Yes' : 'No'}'),
+                  );
+                }).toList(),
+              ),
             ),
             //Moves
             Center(
-              child: Text("Moves"),
+              child: SingleChildScrollView(
+                child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: pokemon.moves.map((move) {
+                  return ListTile(
+                    title: Text(
+                      'Move: ${move.move.name}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('Learned at level ${move.versionGroupDetails.first.levelLearnedAt}'),
+                  );
+                }).toList(),
+              ),
+            ),
             ),
           ],
         ),
