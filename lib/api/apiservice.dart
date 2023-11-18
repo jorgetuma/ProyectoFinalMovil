@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../modelos/specie.dart';
 import '../modelos/pokemoninfo.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,6 +11,7 @@ class ApiService {
   static const String whitePokeball = 'images/pokeball.png';
   static ApiService? instance;
   PokemonInfo? pokemonInfo;
+  Specie? specie;
 
   ApiService._();
 
@@ -29,6 +31,17 @@ class ApiService {
       pokemonInfo = PokemonInfo.fromJson(decodeJson);
     } catch (error, stacktrace) {
       print("Error al cargar la info del pokemon" + stacktrace.toString());
+    }
+  }
+
+  Future<void> getSpeciePokemon(String id) async {
+    try {
+      var url = Uri.https("pokeapi.co", "/api/v2/pokemon-species/" + id);
+      final response = await http.get(url);
+      var decodeJson = jsonDecode(response.body);
+      specie = Specie.fromJson(decodeJson);
+    } catch (error, stacktrace) {
+      print("Error al cargar la info sobre la especie del pokemon" + stacktrace.toString());
     }
   }
 
