@@ -77,23 +77,22 @@ class DetailTabBar extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: SingleChildScrollView(
-                          child: Text(
+                      Row(
+                        children: [
+                          Expanded(child: Text(
                             ApiService.getInstance()
                                 .specie!
                                 .flavorTextEntries
                                 .where((item) => item.language.name == 'en')
                                 .first
-                                .flavorText,
+                                .flavorText.replaceAll('\n', ''),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ),
+                          ),
+                        ],
                       ),
                       SizedBox(
                         height: 10,
