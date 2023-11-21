@@ -174,7 +174,7 @@ class DetailTabBar extends StatelessWidget {
             Container(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                child: Column(
+                child: SingleChildScrollView(child:Column(
                   children: <Widget>[
                     Column(
                       children: pokemon.stats.map((stat) {
@@ -190,12 +190,12 @@ class DetailTabBar extends StatelessWidget {
                                 100.0, // Asumiendo un rango de 0-100
                             backgroundColor: Colors.grey[300], // Color de fondo
                             valueColor: AlwaysStoppedAnimation<Color>(ApiService
-                                    .getInstance()
+                                .getInstance()
                                 .getColorType(ApiService.getInstance()
-                                    .pokemonInfo!
-                                    .types[0]
-                                    .type
-                                    .name)), // Color de la barra de progreso
+                                .pokemonInfo!
+                                .types[0]
+                                .type
+                                .name)), // Color de la barra de progreso
                             minHeight: 20,
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
@@ -204,6 +204,7 @@ class DetailTabBar extends StatelessWidget {
                     )
                   ],
                 ),
+                ),
               ),
             ),
             //Evolutions
@@ -211,7 +212,7 @@ class DetailTabBar extends StatelessWidget {
               child: Text("Evolutions"),
             ),
             //Abilities
-            Center(
+            Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: pokemon.abilities.map((ability) {
