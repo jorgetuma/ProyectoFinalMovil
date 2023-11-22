@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../configs/colors.dart';
 import '../modelos/specie.dart';
 import '../modelos/pokemoninfo.dart';
 import 'package:http/http.dart' as http;
@@ -67,61 +68,80 @@ class ApiService {
   Color getColorType(String type) {
     switch (type) {
       case 'normal':
-        return Colors.brown[400]!;
+        // return Colors.brown[400]!;
+        return AppColors.beige;
         break;
       case 'fire':
-        return Colors.red;
+        return AppColors.lightRed;
+        // return Colors.red;
         break;
       case 'water':
-        return Colors.blue;
+        // return Colors.blue;
+        return AppColors.lightBlue;
         break;
       case 'grass':
-        return Colors.green;
+        // return Colors.green;
+      return AppColors.lightGreen;
         break;
       case 'electric':
-        return Colors.amber;
+        return AppColors.lightYellow;
+        // return Colors.amber;
         break;
       case 'ice':
-        return Colors.cyanAccent[400]!;
+        return AppColors.lightCyan;
+        // return Colors.cyanAccent[400]!;
         break;
       case 'fighting':
-        return Colors.orange;
+        return AppColors.red;
+        // return Colors.orange;
         break;
       case 'poison':
-        return Colors.purple;
+        return AppColors.lightPurple;
+        // return Colors.purple;
         break;
       case 'ground':
-        return Colors.orange[300]!;
+        return AppColors.darkBrown;
+        // return Colors.orange[300]!;
         break;
       case 'flying':
-        return Colors.indigo[200]!;
+        return AppColors.lilac;
+        // return Colors.indigo[200]!;
         break;
       case 'psychic':
-        return Colors.pink;
+        return AppColors.lightPink;
+        // return Colors.pink;
         break;
       case 'bug':
-        return Colors.lightGreen[500]!;
+        return AppColors.lightTeal;
+        // return Colors.lightGreen[500]!;
         break;
       case 'rock':
-        return Colors.grey;
+        return AppColors.lightBrown;
+        // return Colors.grey;
         break;
       case 'ghost':
-        return Colors.indigo[400]!;
+        return AppColors.purple;
+        // return Colors.indigo[400]!;
         break;
       case 'dark':
-        return Colors.brown;
+        return AppColors.black;
+        // return Colors.brown;
         break;
       case 'dragon':
-        return Colors.indigo[800]!;
+        return AppColors.violet;
+        // return Colors.indigo[800]!;
         break;
       case 'steel':
-        return Colors.blueGrey;
+        return AppColors.grey;
+        // return Colors.blueGrey;
         break;
       case 'fairy':
-        return Colors.pinkAccent[100]!;
+        return AppColors.pink;
+        // return Colors.pinkAccent[100]!;
         break;
       default:
-        return Colors.grey;
+        return AppColors.lightBlue;
+        // return Colors.grey;
         break;
     }
   }

@@ -7,6 +7,9 @@ import 'package:pokedex/detail_screen.dart';
 import 'package:pokedex/search_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api/apiservice.dart';
+import 'modelos/pokemoninfo.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,16 +19,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  List pokedex = [];
+  // List pokedex = [];
+  List<PokemonInfo> pokedex = [];
   ScrollController _scrollController = ScrollController();
   bool isFirstTime = true;
+  bool isFetching = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    // Check if it's the first time the app is opened or SharedPreferences is empty.
+    // Check if first time or SharedPreferences is empty.
     checkFirstTime().then((firstTime) {
       if (firstTime) {
         print('First time!');
@@ -170,9 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),controller: _scrollController,
                   itemCount: pokedex.length,
                   itemBuilder: (context, index) {
-                    String url = pokedex[index]['url'];
-                    List<String> parts = url.split('/');
-                    String pokemonId = parts[parts.length - 2];
+                    var color = ApiService.getInstance().getColorType(pokedex[index].types[0].type.name);
+                    // String url = pokedex[index]['url'];
+                    // String url = pokedex[index]['url'];
+                    // List<String> parts = url.split('/');
+                    String pokemonId = pokedex[index].id.toString();
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
@@ -183,52 +190,148 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.green,
+                            color: ApiService.getInstance().getColorType(pokedex[index].types[0].type.name),
+                            boxShadow: [
+                              BoxShadow(
+                                color: color.withOpacity(0.4),
+                                blurRadius: 15,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: CachedNetworkImage(
-                                          imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png',
-                                          placeholder: (context, url) => CircularProgressIndicator(),
-                                          errorWidget: (context, url, error) => Image.asset('images/pokeball.png'),
-                                        ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                        bottom: -15,
+                                        right: -15,
+                                        child: Image.asset('images/pokeball.png', height: 100, fit: BoxFit.fitHeight,)
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: CachedNetworkImage(
+                                        imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png',
+                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) => Image.asset('images/pokeball.png'),
+                                        height: 100,
+                                        fit: BoxFit.fitHeight,
                                       ),
-                                      Text(
-                                        pokedex[index]['name'],
+                                    ),
+                                    Positioned(
+                                      top: 5,
+                                      left: 10,
+                                      child: Text(
+                                        // pokedex[index]['name'],
+                                        pokedex[index].forms[0].name,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 5,
-                                  right: 5,
-                                  child: Text(
-                                    "#${pokemonId}",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
                                     ),
-                                  ),
+                                    Positioned(
+                                      top: 35,
+                                      left: 10,
+                                      child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                          child: Text(
+                                            pokedex[index].types[0].type.name,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20),
+                                          color: Colors.black12,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 5,
+                                      right: 10,
+                                      child: Text(
+                                        "#${pokemonId}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     );
+                    // return Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(id:pokemonId)));
+                    //       print("ID: $pokemonId"); // Print the ID when the card is clicked
+                    //     },
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //         color: ApiService.getInstance().getColorType(pokedex[index].types[0].type.name),
+                    //       ),
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    //         child: Stack(
+                    //           children: [
+                    //             Center(
+                    //               child: Column(
+                    //                 mainAxisAlignment: MainAxisAlignment.center,
+                    //                 children: [
+                    //                   Expanded(
+                    //                     child: CachedNetworkImage(
+                    //                       imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png',
+                    //                       placeholder: (context, url) => CircularProgressIndicator(),
+                    //                       errorWidget: (context, url, error) => Image.asset('images/pokeball.png'),
+                    //                     ),
+                    //                   ),
+                    //                   Text(
+                    //                     // pokedex[index]['name'],
+                    //                     pokedex[index].forms[0].name,
+                    //                     style: const TextStyle(
+                    //                       fontSize: 18,
+                    //                       fontWeight: FontWeight.bold,
+                    //                       color: Colors.white,
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //             Positioned(
+                    //               top: 5,
+                    //               right: 5,
+                    //               child: Text(
+                    //                 "#${pokemonId}",
+                    //                 style: TextStyle(
+                    //                   fontSize: 12,
+                    //                   fontWeight: FontWeight.bold,
+                    //                   color: Colors.white,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // );
 
                   },
                 ),
@@ -239,25 +342,103 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Future<void> fetchPokemonData({int offset = 0}) async {
+  //   var url = Uri.https("pokeapi.co", "/api/v2/pokemon", {"offset": offset.toString(), "limit": "50"});
+  //   final response = await http.get(url);
+  //
+  //   if (response.statusCode == 200) {
+  //     final decodedJson = jsonDecode(response.body);
+  //     List newPokemon = decodedJson['results'];
+  //
+  //     setState(() {
+  //       pokedex.addAll(newPokemon);
+  //     });
+  //   } else {
+  //     throw Exception('Failed to load data');
+  //   }
+  // }
+
+  // Future<void> fetchPokemonData({int offset = 0}) async {
+  //   try {
+  //     var url = Uri.https("pokeapi.co", "/api/v2/pokemon", {"offset": offset.toString(), "limit": "50"});
+  //     final response = await http.get(url);
+  //
+  //     if (response.statusCode == 200) {
+  //       final decodedJson = jsonDecode(response.body);
+  //       List<dynamic> newPokemon = decodedJson['results'];
+  //
+  //       for (var pokemonData in newPokemon) {
+  //         String url = pokemonData['url'];
+  //         List<String> parts = url.split('/');
+  //         String pokemonId = parts[parts.length - 2];
+  //
+  //         // Use getInfoPokemon to get detailed PokemonInfo
+  //         await ApiService.getInstance().getInfoPokemon(pokemonId);
+  //         // Add the fetched PokemonInfo to the list
+  //         pokedex.add(ApiService.getInstance().pokemonInfo!);
+  //       }
+  //
+  //       setState(() {});
+  //     } else {
+  //       throw Exception('Failed to load data');
+  //     }
+  //   } catch (e) {
+  //     // Handle errors
+  //     print("Error fetching Pokemon data: $e");
+  //   }
+  // }
+
   Future<void> fetchPokemonData({int offset = 0}) async {
-    var url = Uri.https("pokeapi.co", "/api/v2/pokemon", {"offset": offset.toString(), "limit": "50"});
-    final response = await http.get(url);
+    if (isFetching) {
+      return;
+    }
 
-    if (response.statusCode == 200) {
-      final decodedJson = jsonDecode(response.body);
-      List newPokemon = decodedJson['results'];
-
+    try {
       setState(() {
-        pokedex.addAll(newPokemon);
+        isFetching = true;
       });
-    } else {
-      throw Exception('Failed to load data');
+
+      var url = Uri.https("pokeapi.co", "/api/v2/pokemon", {"offset": offset.toString(), "limit": "50"});
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final decodedJson = jsonDecode(response.body);
+        List<dynamic> newPokemon = decodedJson['results'];
+
+        for (var pokemonData in newPokemon) {
+          String url = pokemonData['url'];
+          List<String> parts = url.split('/');
+          String pokemonId = parts[parts.length - 2];
+
+          await ApiService.getInstance().getInfoPokemon(pokemonId);
+          pokedex.add(ApiService.getInstance().pokemonInfo!);
+        }
+
+        setState(() {});
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print("Error fetching Pokemon data: $e");
+    } finally {
+      setState(() {
+        isFetching = false;
+      });
     }
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    // if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    //   fetchPokemonData(offset: pokedex.length);
+    // }
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent * 0.5) {
       fetchPokemonData(offset: pokedex.length);
     }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }
