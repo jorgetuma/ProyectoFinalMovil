@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../configs/colors.dart';
+import '../modelos/pokemonevolve.dart';
 import '../modelos/specie.dart';
 import '../modelos/pokemoninfo.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +14,7 @@ class ApiService {
   static ApiService? instance;
   PokemonInfo? pokemonInfo;
   Specie? specie;
+  PokemonEvolve? pokeEvolve;
 
   ApiService._();
 
@@ -43,6 +45,17 @@ class ApiService {
       specie = Specie.fromJson(decodeJson);
     } catch (error, stacktrace) {
       print("Error al cargar la info sobre la especie del pokemon" + stacktrace.toString());
+    }
+  }
+
+  Future<void> getEvolutionPokemon(String evolutionurl) async {
+    try {
+      var url = Uri.parse(evolutionurl);
+      final response = await http.get(url);
+      var decodeJson = jsonDecode(response.body);
+      pokeEvolve = PokemonEvolve.fromJson(decodeJson);
+    } catch (error, stacktrace) {
+      print("Error al cargar la info sobre las evoluciones del pokemon" + stacktrace.toString());
     }
   }
 

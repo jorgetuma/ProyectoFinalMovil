@@ -20,6 +20,7 @@ class _DetailScreenState extends State<DetailScreen> {
     super.initState();
     _loadPokemonInfo();
     _loadPokemonSpecie();
+    _loadPokemonEvolve();
   }
 
   // Función para cargar la información del Pokémon
@@ -37,13 +38,23 @@ class _DetailScreenState extends State<DetailScreen> {
     });
   }
 
+  void _loadPokemonEvolve() async {
+    final specie = ApiService.getInstance().specie;
+    if(specie !=null) {
+      await ApiService.getInstance().getEvolutionPokemon(specie.evolutionChain.url);
+    }
+    setState(() {
+      //Actualizando el estado
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final pokemonInfo = ApiService
         .getInstance()
         .pokemonInfo;
 
-    if (pokemonInfo == null) {
+    if (pokemonInfo == null || ApiService.getInstance().specie == null || ApiService.getInstance().pokeEvolve == null) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
