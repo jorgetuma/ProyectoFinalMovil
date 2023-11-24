@@ -159,10 +159,13 @@ class ApiService {
     }
   }
 
-  static List<String> getEvolutions(EvolvesTo evolutionChain) {
+   List<String> getEvolutions(EvolvesTo evolutionChain) {
     List<String> evolutionNames = [];
 
-    // Agregar la especie inicial
+    //Agregar especie inicial
+    evolutionNames.add(pokeEvolve!.chain.species.name);
+
+    // Agregar la especie siguiente
     evolutionNames.add(evolutionChain.species.name);
 
     // Llamar a la función recursiva para obtener todas las evoluciones

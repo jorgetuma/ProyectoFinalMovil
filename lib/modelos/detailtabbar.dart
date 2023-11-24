@@ -9,6 +9,7 @@ class DetailTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> listaEvoluciones = ApiService.getInstance().getEvolutions(ApiService.getInstance().pokeEvolve!.chain.evolvesTo.first);
     return DefaultTabController(
       initialIndex: 0,
       length: 5,
@@ -208,8 +209,18 @@ class DetailTabBar extends StatelessWidget {
               ),
             ),
             //Evolutions
-            Center(
-              child: Text('Evolutions')
+            Container(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: listaEvoluciones.map((evolution) {
+                    return ListTile(
+                      title: Text(
+                        'Name: ${evolution}',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    );
+                  }).toList(),
+                ),
             ),
 
             //Abilities
