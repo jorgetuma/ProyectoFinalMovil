@@ -209,8 +209,9 @@ class DetailTabBar extends StatelessWidget {
             ),
             //Evolutions
             Center(
-              child: Text("Evolutions"),
+              child: Text('Evolutions')
             ),
+
             //Abilities
             Container(
               child: Column(

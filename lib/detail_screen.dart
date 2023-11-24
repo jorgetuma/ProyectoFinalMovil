@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:pokedex/api/apiservice.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/modelos/detailtabbar.dart';
+import 'package:pokedex/modelos/pokemonevolve.dart';
 import 'package:pokedex/modelos/pokemoninfo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -20,7 +21,6 @@ class _DetailScreenState extends State<DetailScreen> {
     super.initState();
     _loadPokemonInfo();
     _loadPokemonSpecie();
-    _loadPokemonEvolve();
   }
 
   // Función para cargar la información del Pokémon
@@ -38,22 +38,12 @@ class _DetailScreenState extends State<DetailScreen> {
     });
   }
 
-  void _loadPokemonEvolve() async {
-    final specie = ApiService.getInstance().specie;
-    if(specie !=null) {
-      await ApiService.getInstance().getEvolutionPokemon(specie.evolutionChain.url);
-    }
-    setState(() {
-      //Actualizando el estado
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final pokemonInfo = ApiService
         .getInstance()
         .pokemonInfo;
-
+    _loadPokemonEvolve();
     if (pokemonInfo == null || ApiService.getInstance().specie == null || ApiService.getInstance().pokeEvolve == null) {
       return Scaffold(
         body: Center(
@@ -126,6 +116,16 @@ class _DetailScreenState extends State<DetailScreen> {
         ],
       ),
     );
+  }
+
+  void _loadPokemonEvolve() async {
+    final specie = ApiService.getInstance().specie;
+    if(specie !=null) {
+      await ApiService.getInstance().getEvolutionPokemon(specie.evolutionChain.url);
+    }
+    setState(() {
+      //Actualizando el estado
+    });
   }
 
   Widget pokemonTypes(List<Type> types) {

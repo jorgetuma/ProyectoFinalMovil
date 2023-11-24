@@ -158,4 +158,28 @@ class ApiService {
         break;
     }
   }
+
+  static List<String> getEvolutions(EvolvesTo evolutionChain) {
+    List<String> evolutionNames = [];
+
+    // Agregar la especie inicial
+    evolutionNames.add(evolutionChain.species.name);
+
+    // Llamar a la función recursiva para obtener todas las evoluciones
+    _getEvolutionsRecursive(evolutionChain.evolvesTo, evolutionNames);
+
+    return evolutionNames;
+  }
+
+  static void _getEvolutionsRecursive(List<EvolvesTo> evolvesTo, List<String> evolutionNames) {
+    for (var evolution in evolvesTo) {
+      // Agregar el nombre de la especie a la lista
+      evolutionNames.add(evolution.species.name);
+
+      // Si hay más evoluciones, seguir recorriendo
+      if (evolution.evolvesTo.isNotEmpty) {
+        _getEvolutionsRecursive(evolution.evolvesTo, evolutionNames);
+      }
+    }
+  }
 }
