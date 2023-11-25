@@ -9,7 +9,9 @@ class DetailTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> listaEvoluciones = ApiService.getInstance().getEvolutions(ApiService.getInstance().pokeEvolve!.chain.evolvesTo.first);
+    List<Map<String, String>> listaEvoluciones = ApiService.getInstance()
+        .getEvolutions(
+            ApiService.getInstance().pokeEvolve!.chain.evolvesTo.first);
     return DefaultTabController(
       initialIndex: 0,
       length: 5,
@@ -80,18 +82,20 @@ class DetailTabBar extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Expanded(child: Text(
-                            ApiService.getInstance()
-                                .specie!
-                                .flavorTextEntries
-                                .where((item) => item.language.name == 'en')
-                                .first
-                                .flavorText.replaceAll('\n', ''),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Text(
+                              ApiService.getInstance()
+                                  .specie!
+                                  .flavorTextEntries
+                                  .where((item) => item.language.name == 'en')
+                                  .first
+                                  .flavorText
+                                  .replaceAll('\n', ''),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
                           ),
                         ],
                       ),
@@ -175,52 +179,69 @@ class DetailTabBar extends StatelessWidget {
             Container(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                child: SingleChildScrollView(child:Column(
-                  children: <Widget>[
-                    Column(
-                      children: pokemon.stats.map((stat) {
-                        return ListTile(
-                          contentPadding: EdgeInsets.symmetric(vertical: 5),
-                          title: Text(
-                            '${stat.stat.name}: ${stat.baseStat}',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: LinearProgressIndicator(
-                            value: stat.baseStat /
-                                100.0, // Asumiendo un rango de 0-100
-                            backgroundColor: Colors.grey[300], // Color de fondo
-                            valueColor: AlwaysStoppedAnimation<Color>(ApiService
-                                .getInstance()
-                                .getColorType(ApiService.getInstance()
-                                .pokemonInfo!
-                                .types[0]
-                                .type
-                                .name)), // Color de la barra de progreso
-                            minHeight: 20,
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                        );
-                      }).toList(),
-                    )
-                  ],
-                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      Column(
+                        children: pokemon.stats.map((stat) {
+                          return ListTile(
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            title: Text(
+                              '${stat.stat.name}: ${stat.baseStat}',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: LinearProgressIndicator(
+                              value: stat.baseStat /
+                                  100.0, // Asumiendo un rango de 0-100
+                              backgroundColor:
+                                  Colors.grey[300], // Color de fondo
+                              valueColor: AlwaysStoppedAnimation<
+                                  Color>(ApiService
+                                      .getInstance()
+                                  .getColorType(ApiService.getInstance()
+                                      .pokemonInfo!
+                                      .types[0]
+                                      .type
+                                      .name)), // Color de la barra de progreso
+                              minHeight: 20,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
             //Evolutions
             Container(
-              child: Column(
+              child: SingleChildScrollView(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: listaEvoluciones.map((evolution) {
                     return ListTile(
-                      title: Text(
-                        'Name: ${evolution}',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      title: Center(
+                        child: Text(
+                          'Name: ${evolution['name']}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      subtitle: Center(
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          child: ApiService.getInstance().getImage(
+                            ApiService.getInstance().getIdFromUrl(evolution['url'].toString()),
+                          ),
+                        ),
                       ),
                     );
                   }).toList(),
                 ),
+              ),
             ),
 
             //Abilities
@@ -243,18 +264,19 @@ class DetailTabBar extends StatelessWidget {
             Center(
               child: SingleChildScrollView(
                 child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: pokemon.moves.map((move) {
-                  return ListTile(
-                    title: Text(
-                      'Move: ${move.move.name}',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text('Learned at level ${move.versionGroupDetails.first.levelLearnedAt}'),
-                  );
-                }).toList(),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: pokemon.moves.map((move) {
+                    return ListTile(
+                      title: Text(
+                        'Move: ${move.move.name}',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                          'Learned at level ${move.versionGroupDetails.first.levelLearnedAt}'),
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
             ),
           ],
         ),

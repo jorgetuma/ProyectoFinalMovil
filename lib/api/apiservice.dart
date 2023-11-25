@@ -15,6 +15,7 @@ class ApiService {
   PokemonInfo? pokemonInfo;
   Specie? specie;
   PokemonEvolve? pokeEvolve;
+  Map<String,String>? ids;
 
   ApiService._();
 
@@ -159,30 +160,46 @@ class ApiService {
     }
   }
 
-   List<String> getEvolutions(EvolvesTo evolutionChain) {
-    List<String> evolutionNames = [];
+  List<Map<String, String>> getEvolutions(EvolvesTo evolutionChain) {
+    List<Map<String, String>> evolutionList = [];
 
-    //Agregar especie inicial
-    evolutionNames.add(pokeEvolve!.chain.species.name);
+    // Agregar especie inicial
+    evolutionList.add({
+      'name': pokeEvolve!.chain.species.name,
+      'url': pokeEvolve!.chain.species.url,
+    });
 
-    // Agregar la especie siguiente
-    evolutionNames.add(evolutionChain.species.name);
+    // Agregar especie siguiente
+    evolutionList.add({
+      'name': evolutionChain.species.name,
+      'url': evolutionChain.species.url,
+    });
 
     // Llamar a la función recursiva para obtener todas las evoluciones
-    _getEvolutionsRecursive(evolutionChain.evolvesTo, evolutionNames);
+    _getEvolutionsRecursive(evolutionChain.evolvesTo, evolutionList);
 
-    return evolutionNames;
+    return evolutionList;
   }
 
-  static void _getEvolutionsRecursive(List<EvolvesTo> evolvesTo, List<String> evolutionNames) {
+  static void _getEvolutionsRecursive(List<EvolvesTo> evolvesTo, List<Map<String, String>> evolutionList) {
     for (var evolution in evolvesTo) {
-      // Agregar el nombre de la especie a la lista
-      evolutionNames.add(evolution.species.name);
+      // Agregar el nombre y la URL de la especie a la lista
+      evolutionList.add({
+        'name': evolution.species.name,
+        'url': evolution.species.url,
+      });
 
       // Si hay más evoluciones, seguir recorriendo
       if (evolution.evolvesTo.isNotEmpty) {
-        _getEvolutionsRecursive(evolution.evolvesTo, evolutionNames);
+        _getEvolutionsRecursive(evolution.evolvesTo, evolutionList);
       }
     }
   }
-}
+
+   String getIdFromUrl(String url) {
+
+     List<String> parts = url.split('/');
+     String pokemonId = parts[parts.length - 2];
+     return pokemonId;
+  }
+  }
