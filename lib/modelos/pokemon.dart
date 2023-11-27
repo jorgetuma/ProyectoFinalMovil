@@ -46,4 +46,15 @@ class Pokemon {
 
     return data;
   }
+
+  Pokemon.fromMap(Map<String, dynamic> map)
+      : id = map['id'],
+        num = map['num'],
+        name = map['name'],
+        img = map['img'],
+        type = map['type']?.split(', '), // Convert type back to List<String>
+        height = map['height'],
+        weight = map['weight'],
+        candy = map['candy'],
+        egg = map['egg'];
 }

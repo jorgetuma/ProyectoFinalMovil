@@ -2,11 +2,25 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pokedex/api/apiservice.dart';
 
+import 'api/DBHelper.dart';
+import 'api/PokemonDAO.dart';
 import 'home_screen.dart';
+import 'modelos/pokemon.dart';
 
-void main() {
-  runApp(Pokedex());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    // Open or create the database
+    await DatabaseHelper.instance.initDatabase();
+    // print(await DatabaseHelper.instance.getAllPokemons());
+
+    runApp(Pokedex());
+  } catch (e) {
+    print("Error initializing the app: $e");
+  }
 }
 
 class Pokedex extends StatelessWidget {
@@ -20,6 +34,21 @@ class Pokedex extends StatelessWidget {
     );
   }
 }
+
+// Future<void> checkIfDatabaseFilled() async {
+//   try {
+//     final List<PokemonDAO> pokemons = await DatabaseHelper.instance.getAllPokemons();
+//
+//     if (pokemons.isNotEmpty) {
+//       print('Database table is filled!');
+//     } else {
+//       await DatabaseHelper.instance.fetchAndInsertPokemonData();
+//       print('Database table is empty. Fetched and inserted Pokémon data.');
+//     }
+//   } catch (e) {
+//     print('Error checking database: $e');
+//   }
+// }
 
 
 // class Pokedex extends StatefulWidget {

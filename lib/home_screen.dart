@@ -7,6 +7,7 @@ import 'package:pokedex/detail_screen.dart';
 import 'package:pokedex/search_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api/DBHelper.dart';
 import 'api/apiservice.dart';
 import 'modelos/pokemoninfo.dart';
 
@@ -31,21 +32,21 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // Check if first time or SharedPreferences is empty.
-    checkFirstTime().then((firstTime) {
-      if (firstTime) {
-        print('First time!');
-        // Fetch and save all Pokémon data from the API.
-        fetchAndSaveAllPokemonData().then((success) {
-          if (success) {
-            setState(() {
-              isFirstTime = false;
-            });
-          }
-        });
-      } else {
-        print('Not first time!');
-      }
-    });
+    // checkFirstTime().then((firstTime) {
+    //   if (firstTime) {
+    //     print('First time!');
+    //     // Fetch and save all Pokémon data from the API.
+    //     fetchAndSaveAllPokemonData().then((success) {
+    //       if (success) {
+    //         setState(() {
+    //           isFirstTime = false;
+    //         });
+    //       }
+    //     });
+    //   } else {
+    //     print('Not first time!');
+    //   }
+    // });
 
     if(mounted) {
       fetchPokemonData();
