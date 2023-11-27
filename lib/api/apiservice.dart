@@ -15,7 +15,6 @@ class ApiService {
   PokemonInfo? pokemonInfo;
   Specie? specie;
   PokemonEvolve? pokeEvolve;
-  Map<String,String>? ids;
 
   ApiService._();
 

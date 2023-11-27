@@ -218,28 +218,32 @@ class DetailTabBar extends StatelessWidget {
             ),
             //Evolutions
             Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: listaEvoluciones.map((evolution) {
-                    return ListTile(
-                      title: Center(
-                        child: Text(
-                          'Name: ${evolution['name']}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      subtitle: Center(
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          child: ApiService.getInstance().getImage(
-                            ApiService.getInstance().getIdFromUrl(evolution['url'].toString()),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: listaEvoluciones.map((evolution) {
+                      return ListTile(
+                        title: Center(
+                          child: Text(
+                            'Name: ${evolution['name']}',
+                            style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                        subtitle: Center(
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            child: ApiService.getInstance().getImage(
+                              ApiService.getInstance()
+                                  .getIdFromUrl(evolution['url'].toString()),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
@@ -260,8 +264,9 @@ class DetailTabBar extends StatelessWidget {
                 }).toList(),
               ),
             ),
+
             //Moves
-            Center(
+            Container(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
