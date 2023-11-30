@@ -51,7 +51,11 @@ class _DetailScreenState extends State<DetailScreen> {
         ),
       );
     }
+    var alturaMinima = MediaQuery.of(context).size.height / 1.8;
 
+    if(MediaQuery.of(context).orientation == Orientation.landscape) {
+      alturaMinima = MediaQuery.of(context).size.height / 5;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(pokemonInfo.forms[0].name,
@@ -111,7 +115,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 .of(context)
                 .size
                 .height,
-            minHeight: MediaQuery.of(context).size.height / 1.8,
+            minHeight: alturaMinima,
           ),
         ],
       ),
