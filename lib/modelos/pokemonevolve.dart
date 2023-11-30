@@ -7,41 +7,25 @@ class PokemonEvolve {
   factory PokemonEvolve.fromJson(Map<String, dynamic> json) {
     return PokemonEvolve(
       id: json['id'],
-      chain: Chain.fromJson(json['chain']),
+      chain: Chain.fromJson(json['chain'] as Map<String, dynamic>),
     );
   }
 }
 
 class Chain {
-  final List<EvolvesTo> evolvesTo;
+  final List<Chain> evolvesTo;
   final bool isBaby;
   final Species species;
 
   Chain({required this.evolvesTo, required this.isBaby, required this.species});
 
   factory Chain.fromJson(Map<String, dynamic> json) {
+    var evolvesToList = json['evolves_to'] as List;
+    List<Chain> evolvesTo = evolvesToList.map((entry) => Chain.fromJson(entry)).toList();
     return Chain(
-      evolvesTo: List<EvolvesTo>.from(json['evolves_to'].map((x) => EvolvesTo.fromJson(x))),
+      evolvesTo: evolvesTo,
       isBaby: json['is_baby'],
-      species: Species.fromJson(json['species']),
-    );
-  }
-}
-
-class EvolvesTo {
-  final List<EvolvesTo> evolvesTo;
-  final bool isBaby;
-  final Species species;
-
-  EvolvesTo({required this.evolvesTo, required this.isBaby, required this.species});
-
-  factory EvolvesTo.fromJson(Map<String, dynamic> json) {
-    return EvolvesTo(
-      evolvesTo: json['evolves_to'] != null
-          ? List<EvolvesTo>.from(json['evolves_to'].map((x) => EvolvesTo.fromJson(x)))
-          : [],
-      isBaby: json['is_baby'],
-      species: Species.fromJson(json['species']),
+      species: Species.fromJson(json['species'] as Map<String, dynamic>),
     );
   }
 }

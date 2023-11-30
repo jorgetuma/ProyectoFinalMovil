@@ -159,34 +159,11 @@ class ApiService {
     }
   }
 
-  List<Map<String, String>> getEvolutions(EvolvesTo evolutionChain) {
+  List<Map<String, String>> getEvolutions(Chain evolutionChain) {
     List<Map<String, String>> evolutionList = [];
 
-    //En el caso de Evee cargar las evoluciones de forma especial
-    if(pokeEvolve!.id == 67) {
-
-      evolutionList = [
-        {'name': "eevee",'url': "https://pokeapi.co/api/v2/pokemon-species/133/"},
-        {"name": "Vaporeon", "url": "https://pokeapi.co/api/v2/pokemon-species/134/"},
-        {"name": "Jolteon", "url": "https://pokeapi.co/api/v2/pokemon-species/135/"},
-        {"name": "Flareon", "url": "https://pokeapi.co/api/v2/pokemon-species/136/"},
-        {"name": "Espeon", "url": "https://pokeapi.co/api/v2/pokemon-species/196/"},
-        {"name": "Umbreon", "url": "https://pokeapi.co/api/v2/pokemon-species/197/"},
-        {"name": "Leafeon", "url": "https://pokeapi.co/api/v2/pokemon-species/470/"},
-        {"name": "Glaceon", "url": "https://pokeapi.co/api/v2/pokemon-species/471/"},
-        {"name": "Sylveon", "url": "https://pokeapi.co/api/v2/pokemon-species/700/"},
-      ];
-      return evolutionList;
-    }
 
     // Agregar especie inicial
-    evolutionList.add({
-      'name': pokeEvolve!.chain.species.name,
-      'url': pokeEvolve!.chain.species.url,
-    });
-
-
-    // Agregar especie siguiente
     evolutionList.add({
       'name': evolutionChain.species.name,
       'url': evolutionChain.species.url,
@@ -198,7 +175,7 @@ class ApiService {
     return evolutionList;
   }
 
-  static void _getEvolutionsRecursive(List<EvolvesTo> evolvesTo, List<Map<String, String>> evolutionList) {
+  static void _getEvolutionsRecursive(List<Chain> evolvesTo, List<Map<String, String>> evolutionList) {
     for (var evolution in evolvesTo) {
       // Agregar el nombre y la URL de la especie a la lista
       evolutionList.add({

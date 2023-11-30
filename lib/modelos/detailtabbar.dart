@@ -11,7 +11,7 @@ class DetailTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Map<String, String>> listaEvoluciones = ApiService.getInstance()
         .getEvolutions(
-            ApiService.getInstance().pokeEvolve!.chain.evolvesTo.first);
+            ApiService.getInstance().pokeEvolve!.chain);
     return DefaultTabController(
       initialIndex: 0,
       length: 5,
