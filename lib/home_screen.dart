@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokedex/api/PokemonDAO.dart';
 import 'package:pokedex/detail_screen.dart';
+import 'package:pokedex/favorite_screen.dart';
 import 'package:pokedex/search_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +20,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>{
 
   // List pokedex = [];
   List<PokemonDAO> pokedex = [];
@@ -154,23 +155,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             ),
                           ),
-                          Container(
-                            child: IconButton(
-                              onPressed: () {
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => FavoriteScreen()));
+                                },
+                                icon: Icon(Icons.favorite_outline, color: Colors.red),
+                              ),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle, // Circular shape
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.red, // Border color
+                                  width: 1.0, // Border width
+                                ),// Button color
+                              ),
 
-                              },
-                              icon: Icon(Icons.filter_list, color: Colors.red),
                             ),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle, // Circular shape
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.red, // Border color
-                                width: 1.0, // Border width
-                              ),// Button color
-                            ),
-
                           ),
+
                         ],
                       ),
                     ],
@@ -237,11 +242,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Positioned(
-                                      top: 5,
+                                      top: 22,
                                       left: 10,
                                       child: Text(
                                         // pokedex[index]['name'],
-                                        pokedex[index].name,
+                                        capitalize(pokedex[index].name),
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -250,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Positioned(
-                                      top: 35,
+                                      top: 50,
                                       left: 10,
                                       child: Container(
                                         child: Padding(
@@ -272,14 +277,51 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     Positioned(
                                       top: 5,
-                                      right: 10,
+                                      left: 10,
                                       child: Text(
                                         "#${pokemonId}",
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: Colors.black26,
                                         ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 5,
+                                      right: 10,
+                                      child: FutureBuilder<bool>(
+                                        future: DatabaseHelper.instance.isPokemonFavorite(pokedex[index].id),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                            // Return a loading indicator or placeholder if needed
+                                            return CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            // Handle error
+                                            return Icon(Icons.favorite_border, color: Colors.grey);
+                                          } else {
+                                            bool isFavorite = snapshot.data ?? false;
+
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                // Toggle the favorite status
+                                                bool newFavoriteStatus = !isFavorite;
+
+                                                // Update the database with the new favorite status
+                                                await DatabaseHelper.instance.updatePokemonFavoriteStatus(pokedex[index].id, newFavoriteStatus);
+
+                                                // If you want to perform any additional actions when the favorite status changes,
+                                                // you can do that here.
+
+                                                // Note: setState might be needed if you are using this within a StatefulWidget
+                                              },
+                                              child: Icon(
+                                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                                color: isFavorite ? Colors.red : Colors.grey,
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                     ),
                                   ],
@@ -355,4 +397,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  String capitalize(String input) {
+    if (input.isEmpty) {
+      return input;
+    }
+    return input[0].toUpperCase() + input.substring(1);
+  }
+
 }

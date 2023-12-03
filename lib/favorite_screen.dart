@@ -1,99 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/api/PokemonDAO.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api/DBHelper.dart';
+import 'api/PokemonDAO.dart';
 import 'api/apiservice.dart';
 import 'detail_screen.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+class FavoriteScreen extends StatefulWidget {
+  const FavoriteScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
-  List<PokemonDAO> searchResults = [];
-  final TextEditingController _searchController = TextEditingController();
+class _FavoriteScreenState extends State<FavoriteScreen> {
+  List<PokemonDAO> favorites = [];
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    _searchController.addListener(() {
-      updateSearchResults(_searchController.text);
-    });
-  }
-
-  // Future<void> updateSearchResults(String query) async {
-  //   if (query.isNotEmpty) {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final allPokemonData = prefs.getKeys();
-  //
-  //     List<String> matchingPokemon = allPokemonData.where((pokemonId) {
-  //       final value = prefs.get(pokemonId);
-  //
-  //       if (value is String) {
-  //         // Check if the query matches a Pokemon name or ID.
-  //         final nameLower = value.toLowerCase();
-  //         if (nameLower.contains(query.toLowerCase())) {
-  //           return true; // Matches the Pokemon name.
-  //         } else if (pokemonId.contains(query)) {
-  //           return true; // Matches the Pokemon ID.
-  //         }
-  //       }
-  //
-  //       return false;
-  //     }).toList();
-  //
-  //     // Sort the search results by Pokémon ID
-  //     matchingPokemon.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
-  //
-  //     // Update the search results.
-  //     setState(() {
-  //       searchResults = matchingPokemon;
-  //     });
-  // }
-  // }
-
-  Future<void> updateSearchResults(String query) async {
-    if (query.isNotEmpty) {
-      try {
-        List<PokemonDAO> allPokemons = await DatabaseHelper.instance.getAllPokemons();
-        List<PokemonDAO> matchingPokemon = [];
-
-        for (var pokemon in allPokemons) {
-          // Check if the query matches a Pokemon name or ID.
-          final nameLower = pokemon.name.toLowerCase();
-          if (nameLower.contains(query.toLowerCase()) || pokemon.id.toString().contains(query) || pokemon.type.contains(query)) {
-            matchingPokemon.add(pokemon);
-          }
-        }
-
-        // Update the search results.
-        setState(() {
-          searchResults = matchingPokemon;
-        });
-      } catch (e) {
-        print("Error updating search results: $e");
-
-        // Update the search results to show an error
-        // setState(() {
-        //   searchResults = ['error'];
-        // });
-      }
+    if (mounted) {
+      fetchFavoritePokemons();
     }
-  }
-
-
-
-
-  // Function to get the Pokémon name from SharedPreferences
-  Future<String> getPokemonName(String pokemonId) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(pokemonId) ?? 'Unknown';
   }
 
   @override
@@ -121,10 +51,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             size: 50,
                             color: Colors.red,
                           ),
-                          Text('Pokedex', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                          Text('Favorites', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                         ],
                       ),
-                      Expanded(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
                           children: [
                             IconButton(
@@ -132,39 +63,6 @@ class _SearchScreenState extends State<SearchScreen> {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextField(
-                                  autofocus: true,
-                                  controller: _searchController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Search Pokemon by name or ID',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                  ),
-                                  // Add text field controllers and handlers as needed
-                                ),
-                              ),
-                            ),
-                            Container(
-                              child: IconButton(
-                                onPressed: () {
-                                  // Handle filter button click here
-                                },
-                                icon: Icon(Icons.filter_list, color: Colors.red),
-                              ),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle, // Circular shape
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: Colors.red, // Border color
-                                  width: 1.0, // Border width
-                                ),// Button color
-                              ),
-
                             ),
                           ],
                         ),
@@ -174,28 +72,27 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               Positioned(
-                top: 150,
+                top: 100,
                 bottom: 0,
                 width: width,
                 child: GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 1.4,
                 ),
-                  itemCount: searchResults.length,
+                  itemCount: favorites.length,
                   itemBuilder: (context, index) {
-                    String pokemonId = searchResults[index].id.toString();
-                    var color = ApiService.getInstance().getColorType(searchResults[index].type);
+                    String pokemonId = favorites[index].id.toString();
+                    var color = ApiService.getInstance().getColorType(favorites[index].type);
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(id:pokemonId)));
-                          print("ID: $pokemonId"); // Print the ID when the card is clicked
                         },
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: ApiService.getInstance().getColorType(searchResults[index].type),
+                            color: ApiService.getInstance().getColorType(favorites[index].type),
                             boxShadow: [
                               BoxShadow(
                                 color: color.withOpacity(0.4),
@@ -227,11 +124,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                     Positioned(
-                                      top: 5,
+                                      top: 22,
                                       left: 10,
                                       child: Text(
-                                        // pokedex[index]['name'],
-                                        searchResults[index].name,
+                                        capitalize(favorites[index].name),
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -240,13 +136,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                     Positioned(
-                                      top: 35,
+                                      top: 50,
                                       left: 10,
                                       child: Container(
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                                           child: Text(
-                                            searchResults[index].type,
+                                            favorites[index].type,
                                             style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
@@ -262,14 +158,51 @@ class _SearchScreenState extends State<SearchScreen> {
                                     ),
                                     Positioned(
                                       top: 5,
-                                      right: 10,
+                                      left: 10,
                                       child: Text(
                                         "#${pokemonId}",
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: Colors.black26,
                                         ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 5,
+                                      right: 10,
+                                      child: FutureBuilder<bool>(
+                                        future: DatabaseHelper.instance.isPokemonFavorite(favorites[index].id),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                            return CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            // Handle error
+                                            return Icon(Icons.favorite_border, color: Colors.grey);
+                                          } else {
+                                            bool isFavorite = snapshot.data ?? false;
+
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                // Toggle the favorite status
+                                                bool newFavoriteStatus = !isFavorite;
+
+                                                // Update the database with the new favorite status
+                                                await DatabaseHelper.instance.updatePokemonFavoriteStatus(favorites[index].id, newFavoriteStatus);
+
+                                                if (!newFavoriteStatus) {
+                                                  setState(() {
+                                                    favorites.removeAt(index);
+                                                  });
+                                                }
+                                              },
+                                              child: Icon(
+                                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                                color: isFavorite ? Colors.red : Colors.grey,
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                     ),
                                   ],
@@ -284,9 +217,32 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                 ),
               ),
+
             ],
           ),
         )
     );
+  }
+
+  Future<void> fetchFavoritePokemons() async {
+    try {
+      List<PokemonDAO> allFavorites = await DatabaseHelper.instance.getAllFavoritePokemons();
+
+      // Sort the list by id
+      allFavorites.sort((a, b) => a.id.compareTo(b.id));
+
+      setState(() {
+        favorites.addAll(allFavorites);
+      });
+    } catch(e) {
+      print("Error fetching Pokemon data: $e");
+    }
+  }
+
+  String capitalize(String input) {
+    if (input.isEmpty) {
+      return input;
+    }
+    return input[0].toUpperCase() + input.substring(1);
   }
 }

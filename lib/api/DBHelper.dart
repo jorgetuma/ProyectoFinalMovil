@@ -68,6 +68,14 @@ class DatabaseHelper {
         isFavorite INTEGER
       )
     ''');
+
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS favorite_pokemons(
+        id INTEGER PRIMARY KEY,
+        pokemon_id INTEGER,
+        FOREIGN KEY(pokemon_id) REFERENCES pokemons(id)
+      )
+    ''');
     // saveLastUpdateDate();
     print("DB created");
     Future.delayed(Duration(milliseconds: 100), () {
@@ -143,13 +151,23 @@ class DatabaseHelper {
 
   Future<int> updatePokemonFavoriteStatus(int id, bool isFavorite) async {
     Database db = await database;
-    return await db.update(
-      tableName,
-      {'isFavorite': isFavorite ? 1 : 0},
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+
+    // Check if the Pokémon is being marked as a favorite or unfavorite
+    if (isFavorite) {
+      // Insert a record in the favorite_pokemons table
+      await db.insert('favorite_pokemons', {'pokemon_id': id});
+      print('added');
+    } else {
+      // Delete the record from the favorite_pokemons table
+      await db.delete('favorite_pokemons', where: 'pokemon_id = ?', whereArgs: [id]);
+      print('deleted');
+    }
+
+    _pokemonStreamController.add(await getAllPokemons()); // Notify listeners
+
+    return 1;
   }
+
 
   Future<List<PokemonDAO>> searchPokemon(String query) async {
     Database db = await database;
@@ -172,6 +190,44 @@ class DatabaseHelper {
     int? count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $tableName'));
     return count;
   }
+
+  Future<bool> isPokemonFavorite(int pokemonId) async {
+    try {
+      Database db = await database;
+      List<Map<String, dynamic>> result = await db.query(
+        'favorite_pokemons',
+        where: 'pokemon_id = ?',
+        whereArgs: [pokemonId],
+      );
+
+      // If the result list is not empty, the Pokémon is marked as a favorite
+      return result.isNotEmpty;
+    } catch (e) {
+      print('Error checking if Pokemon is a favorite: $e');
+      return false;
+    }
+  }
+
+  Future<List<PokemonDAO>> getAllFavoritePokemons() async {
+    try {
+      Database db = await database;
+
+      // Join the two tables to get details of favorite Pokémon
+      List<Map<String, dynamic>> maps = await db.rawQuery('''
+        SELECT pokemons.*
+        FROM favorite_pokemons
+        INNER JOIN pokemons ON favorite_pokemons.pokemon_id = pokemons.id
+      ''');
+
+      return List.generate(maps.length, (index) {
+        return PokemonDAO.fromMap(maps[index]);
+      });
+    } catch (e) {
+      print("Error fetching favorite Pokémon: $e");
+      throw e; // Handle the error or re-throw it as needed
+    }
+  }
+
 
 }
 

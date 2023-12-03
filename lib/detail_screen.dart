@@ -6,6 +6,8 @@ import 'package:pokedex/modelos/pokemonevolve.dart';
 import 'package:pokedex/modelos/pokemoninfo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'api/DBHelper.dart';
+
 class DetailScreen extends StatefulWidget {
   final String id;
 
@@ -16,14 +18,25 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  bool isFavorite = false;
   @override
   void initState() {
     super.initState();
+    _loadFavoriteStatus();
     if (mounted) {
       _loadPokemonInfo();
       _loadPokemonSpecie();
     }
 
+  }
+
+  Future<void> _loadFavoriteStatus() async {
+    isFavorite = await DatabaseHelper.instance.isPokemonFavorite(int.parse(widget.id));
+    if (mounted) {
+      setState(() {
+        // Trigger a rebuild if the widget is still in the tree
+      });
+    }
   }
 
   // Función para cargar la información del Pokémon
@@ -76,6 +89,26 @@ class _DetailScreenState extends State<DetailScreen> {
             Navigator.pop(context);
           },
         ),
+        actions: <Widget>[
+          // Other actions can go here if needed
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : Colors.grey,
+            ),
+            onPressed: () {
+              // Handle favorite/unfavorite logic here
+              setState(() {
+                isFavorite = !isFavorite;
+              });
+              // Update the database with the new favorite status
+              DatabaseHelper.instance.updatePokemonFavoriteStatus(
+                pokemonInfo.id,
+                isFavorite,
+              );
+            },
+          ),
+        ],
       ),
       backgroundColor: ApiService.getInstance().getColorType(
           pokemonInfo.types[0].type.name),
