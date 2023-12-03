@@ -1,6 +1,8 @@
 
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -17,6 +19,9 @@ class DatabaseHelper {
 
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
+  final _pokemonStreamController = StreamController<List<PokemonDAO>>.broadcast();
+  Stream<List<PokemonDAO>> get pokemonStream => _pokemonStreamController.stream;
+
   Future<Database> get database async {
     if (_database != null) return _database;
     _database = await initDatabase();
@@ -28,12 +33,54 @@ class DatabaseHelper {
       String path = join(await getDatabasesPath(), databaseName);
       _database = await openDatabase(path, version: 1, onCreate: _onCreate);
 
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? lastUpdateDate = prefs.getString('lastUpdateDate');
+
+      if (lastUpdateDate != null) {
+        DateTime lastUpdate = DateTime.parse(lastUpdateDate);
+        DateTime now = DateTime.now();
+        Duration difference = now.difference(lastUpdate);
+
+        if (difference.inDays > 0 || (await getPokemonRowCount())! < 1292) {
+          print("loading data");
+          await _onCreate(_database, 1);
+        }
+      }
+
       return _database;
     } catch (e) {
       print("Error initializing database: $e");
       throw e; // Re-throw the exception to propagate the error
     }
   }
+
+  Future<void> _onCreate(Database db, int version) async {
+
+    // Drop the existing table if it exists
+    await db.execute('DROP TABLE IF EXISTS $tableName');
+
+    await db.execute('''
+      CREATE TABLE $tableName(
+        id INTEGER PRIMARY KEY,
+        num TEXT,
+        name TEXT,
+        type TEXT,
+        isFavorite INTEGER
+      )
+    ''');
+    // saveLastUpdateDate();
+    print("DB created");
+    Future.delayed(Duration(milliseconds: 100), () {
+      fetchAndInsertPokemonData();
+    });
+  }
+
+  Future<void> saveLastUpdateDate() async {
+    print("date updated!!!");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('lastUpdateDate', DateTime.now().toIso8601String());
+  }
+
 
   Future<void> fetchAndInsertPokemonData({int offset = 0}) async {
 
@@ -68,6 +115,7 @@ class DatabaseHelper {
           await DatabaseHelper.instance.insertPokemon(pokemon);
           // await DatabaseHelper.instance.insertPokemon(ApiService.getInstance().pokemonInfo! as PokemonDAO);
         }
+        saveLastUpdateDate();
 
       } else {
         throw Exception('Failed to load data');
@@ -77,25 +125,11 @@ class DatabaseHelper {
     }
   }
 
-
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE $tableName(
-        id INTEGER PRIMARY KEY,
-        num TEXT,
-        name TEXT,
-        type TEXT,
-        isFavorite INTEGER
-      )
-    ''');
-    Future.delayed(Duration(milliseconds: 100), () {
-      fetchAndInsertPokemonData();
-    });
-  }
-
   Future<int> insertPokemon(PokemonDAO pokemon) async {
     Database db = await database;
-    return await db.insert(tableName, pokemon.toJson());
+    int result = await db.insert(tableName, pokemon.toJson());
+    _pokemonStreamController.add(await getAllPokemons()); // Notify listeners
+    return result;
   }
 
   Future<List<PokemonDAO>> getAllPokemons() async {
@@ -127,6 +161,16 @@ class DatabaseHelper {
     return List.generate(maps.length, (index) {
       return PokemonDAO.fromMap(maps[index]);
     });
+  }
+
+  void dispose() {
+    _pokemonStreamController.close();
+  }
+
+  Future<int?> getPokemonRowCount() async {
+    Database db = await database;
+    int? count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $tableName'));
+    return count;
   }
 
 }

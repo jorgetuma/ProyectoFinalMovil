@@ -19,23 +19,30 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    _loadPokemonInfo();
-    _loadPokemonSpecie();
+    if (mounted) {
+      _loadPokemonInfo();
+      _loadPokemonSpecie();
+    }
+
   }
 
   // Función para cargar la información del Pokémon
   void _loadPokemonInfo() async {
     await ApiService.getInstance().getInfoPokemon(widget.id.toString());
-    setState(() {
-      //Actualizando el estado
-    });
+    if (mounted) {
+      setState(() {
+        //Actualizando el estado
+      });
+    }
   }
 
   void _loadPokemonSpecie() async {
     await ApiService.getInstance().getSpeciePokemon(widget.id.toString());
-    setState(() {
-      //Actualizando el estado
-    });
+    if (mounted) {
+      setState(() {
+        //Actualizando el estado
+      });
+    }
   }
 
   @override
@@ -127,9 +134,11 @@ class _DetailScreenState extends State<DetailScreen> {
     if(specie !=null) {
       await ApiService.getInstance().getEvolutionPokemon(specie.evolutionChain.url);
     }
-    setState(() {
-      //Actualizando el estado
-    });
+    if (mounted) {
+      setState(() {
+        //Actualizando el estado
+      });
+    }
   }
 
   Widget pokemonTypes(List<Type> types) {

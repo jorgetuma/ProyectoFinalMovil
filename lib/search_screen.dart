@@ -102,6 +102,7 @@ class _SearchScreenState extends State<SearchScreen> {
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
         body: SafeArea(
+          bottom: false,
           child: Stack(
             children: [
               Positioned(
