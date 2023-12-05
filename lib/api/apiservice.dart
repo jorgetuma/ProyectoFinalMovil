@@ -162,7 +162,6 @@ class ApiService {
   List<Map<String, String>> getEvolutions(Chain evolutionChain) {
     List<Map<String, String>> evolutionList = [];
 
-
     // Agregar especie inicial
     evolutionList.add({
       'name': evolutionChain.species.name,

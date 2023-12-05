@@ -25,7 +25,6 @@ class _DetailScreenState extends State<DetailScreen> {
     _loadFavoriteStatus();
     if (mounted) {
       _loadPokemonInfo();
-      _loadPokemonSpecie();
     }
 
   }
@@ -45,12 +44,13 @@ class _DetailScreenState extends State<DetailScreen> {
     if (mounted) {
       setState(() {
         //Actualizando el estado
+        _loadPokemonSpecie();
       });
     }
   }
 
   void _loadPokemonSpecie() async {
-    await ApiService.getInstance().getSpeciePokemon(widget.id.toString());
+    await ApiService.getInstance().getSpeciePokemon(ApiService.getInstance().getIdFromUrl(ApiService.getInstance().pokemonInfo!.species.url));
     if (mounted) {
       setState(() {
         //Actualizando el estado

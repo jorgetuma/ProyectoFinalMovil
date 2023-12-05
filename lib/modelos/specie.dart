@@ -1,28 +1,14 @@
 class Specie {
-  int baseHappiness;
-  int captureRate;
-  PokeColor color;
-  List<EggGroup> eggGroups;
   EvolutionChain evolutionChain;
   List<FlavorTextEntry> flavorTextEntries;
 
   Specie({
-    required this.baseHappiness,
-    required this.captureRate,
-    required this.color,
-    required this.eggGroups,
     required this.evolutionChain,
     required this.flavorTextEntries,
   });
 
   factory Specie.fromJson(Map<String, dynamic> json) {
     return Specie(
-      baseHappiness: json['base_happiness'],
-      captureRate: json['capture_rate'],
-      color: PokeColor.fromJson(json['color']),
-      eggGroups: (json['egg_groups'] as List)
-          .map((eggGroup) => EggGroup.fromJson(eggGroup))
-          .toList(),
       evolutionChain: EvolutionChain.fromJson(json['evolution_chain']),
       flavorTextEntries: (json['flavor_text_entries'] as List)
           .map((entry) => FlavorTextEntry.fromJson(entry))

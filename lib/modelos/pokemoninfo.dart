@@ -14,6 +14,7 @@ class PokemonInfo {
   List<Stat> stats;
   List<Type> types;
   int weight;
+  SpeciesInfo species;
 
   PokemonInfo({
     required this.abilities,
@@ -29,6 +30,7 @@ class PokemonInfo {
     required this.stats,
     required this.types,
     required this.weight,
+    required this.species,
   });
 
   factory PokemonInfo.fromJson(Map<String, dynamic> json) {
@@ -60,6 +62,7 @@ class PokemonInfo {
           .map((type) => Type.fromJson(type))
           .toList(),
       weight: json['weight'],
+      species: SpeciesInfo.fromJson(json['species']),
     );
   }
 }
@@ -177,3 +180,20 @@ class VersionGroupDetail {
   );
   }
   }
+
+class SpeciesInfo {
+  String name;
+  String url;
+
+  SpeciesInfo({
+    required this.name,
+    required this.url,
+  });
+
+  factory SpeciesInfo.fromJson(Map<String, dynamic> json) {
+    return SpeciesInfo(
+      name: json['name'],
+      url: json['url'],
+    );
+  }
+}
