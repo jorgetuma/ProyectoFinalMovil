@@ -27,37 +27,6 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  // Future<void> updateSearchResults(String query) async {
-  //   if (query.isNotEmpty) {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final allPokemonData = prefs.getKeys();
-  //
-  //     List<String> matchingPokemon = allPokemonData.where((pokemonId) {
-  //       final value = prefs.get(pokemonId);
-  //
-  //       if (value is String) {
-  //         // Check if the query matches a Pokemon name or ID.
-  //         final nameLower = value.toLowerCase();
-  //         if (nameLower.contains(query.toLowerCase())) {
-  //           return true; // Matches the Pokemon name.
-  //         } else if (pokemonId.contains(query)) {
-  //           return true; // Matches the Pokemon ID.
-  //         }
-  //       }
-  //
-  //       return false;
-  //     }).toList();
-  //
-  //     // Sort the search results by Pokémon ID
-  //     matchingPokemon.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
-  //
-  //     // Update the search results.
-  //     setState(() {
-  //       searchResults = matchingPokemon;
-  //     });
-  // }
-  // }
-
   Future<void> updateSearchResults(String query) async {
     if (query.isNotEmpty) {
       try {
@@ -140,7 +109,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   autofocus: true,
                                   controller: _searchController,
                                   decoration: InputDecoration(
-                                    hintText: 'Search Pokemon by name or ID',
+                                    hintText: 'Search Pokemon by name, ID or type',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
@@ -148,23 +117,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                   // Add text field controllers and handlers as needed
                                 ),
                               ),
-                            ),
-                            Container(
-                              child: IconButton(
-                                onPressed: () {
-                                  // Handle filter button click here
-                                },
-                                icon: Icon(Icons.filter_list, color: Colors.red),
-                              ),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle, // Circular shape
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: Colors.red, // Border color
-                                  width: 1.0, // Border width
-                                ),// Button color
-                              ),
-
                             ),
                           ],
                         ),
@@ -227,7 +179,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                     Positioned(
-                                      top: 5,
+                                      top: 22,
                                       left: 10,
                                       child: Text(
                                         // pokedex[index]['name'],
@@ -240,7 +192,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                     Positioned(
-                                      top: 35,
+                                      top: 50,
                                       left: 10,
                                       child: Container(
                                         child: Padding(

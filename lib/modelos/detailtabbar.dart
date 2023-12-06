@@ -85,12 +85,10 @@ class DetailTabBar extends StatelessWidget {
                           Expanded(
                             child: Text(
                               ApiService.getInstance()
-                                  .specie!
-                                  .flavorTextEntries
-                                  .where((item) => item.language.name == 'en')
-                                  .first
-                                  .flavorText
-                                  .replaceAll('\n', ''),
+                                  .specie?.flavorTextEntries
+                                  ?.where((item) => item.language.name == 'en')
+                                  .firstOrNull?.flavorText
+                                  ?.replaceAll('\n', '') ?? '-',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,

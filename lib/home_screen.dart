@@ -252,6 +252,8 @@ class _HomeScreenState extends State<HomeScreen>{
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     Positioned(
